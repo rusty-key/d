@@ -1,0 +1,100 @@
+#!/bin/bash
+
+command=$1
+shift
+
+case "$command" in
+  i)
+    d image $@
+    ;;
+
+  is)
+    d images $@
+    ;;
+
+  isq)
+    d images -q $@
+    ;;
+
+  isa)
+    d images -a $@
+    ;;
+
+  isqa)
+    d images -qa $@
+    ;;
+
+  l)
+    d ps $@
+    ;;
+
+  ls)
+    d ps $@
+    ;;
+
+  la)
+    d ps -a $@
+    ;;
+
+  lq)
+    d ps -lq $@
+    ;;
+
+  laq)
+    d ps -laq $@
+    ;;
+
+  b)
+    name=$1; shift
+
+    d build -t $name $@
+    ;;
+
+  sh)
+    image=$1; shift
+    d exec -i -t $image /bin/bash $@
+    ;;
+
+  rmi)
+    d rmi $(d isq) $@
+    ;;
+
+  halt)
+    d stop $(d laq)
+    ;;
+
+  rmf)
+    container=$1; shift
+    d stop $container && d rm $container
+    ;;
+
+  rmc)
+    d rm $(d laq) $@
+    ;;
+
+  rmca)
+    d stop $(d laq) && d rm $(d laq)
+    ;;
+
+  d)
+    d run -d -P $@
+    ;;
+
+  v)
+    d volume $@
+    ;;
+
+  vc)
+    name=$1; shift
+    d volume create --name $name $@
+    ;;
+
+  ip)
+    d inspect --format '{{ .NetworkSettings.IPAddress }}' $@
+    ;;
+
+  *)
+    docker $command $@
+    ;;
+
+esac
